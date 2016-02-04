@@ -62,7 +62,9 @@ def and_create_a_domain_in_group1_called_group2(step, group1, group2):
 
 @step(u'Then the domain "([^"]*)" is saved in "([^"]*)"')
 def then_the_domain_group1_is_saved_in_group2(step, group1, group2):
+    domain_name_test = group1+str(world.scenario_time)
     world.driver.find_element_by_css_selector('[data-id=domains]').click()
+    time.sleep(1)
     domain_link = world.driver.find_element_by_css_selector('[data-name='+group1+str(world.scenario_time)+']')
     text = " "+group2
     domain_in_collection=world.driver.find_elements_by_xpath('//ul[@class="ui-level2_open"]/li[text()="'+text+'"]/../ul/li[@data-name="'+group1+str(world.scenario_time)+'"]')
@@ -169,4 +171,45 @@ def then_the_new_contributor_type_is_created(step, contributor_type_name):
     except NoSuchElementException, e:
         print "New Contributor type is not created properly"
         assert False, "New Contributor type is not created properly"
+
+
+@step(u'And add a search field')
+def and_add_a_search_field(step):
+    time.sleep(1)
+    world.driver.find_element_by_css_selector('[data-popup=cli0]').click()
+    time.sleep(1)
+    world.driver.find_element_by_css_selector('[data-panel=search]').click()
+
+@step(u'And perform an "([^"]*)" search')
+def and_perform_an_group1_search(step, search_term):
+    search_field = world.driver.find_element_by_css_selector('[class=ace_content]')
+    time.sleep(1)
+    seq = ActionChains(world.driver).move_to_element(search_field).send_keys(search_term)
+    seq.perform()
+
+    world.driver.find_element_by_css_selector('[data-type=run-search]').click()
+
+
+@step(u'And the search is executed')
+def and_the_search_is_executed(step):
+    time.sleep(1)
+    try:
+        search_time_element = world.driver.find_element_by_css_selector('[class=ui-panel-controls-btn-time]')
+    except NoSuchElementException, e:
+        print "Search is not executed"
+        assert False, "Search is not executed"
+
+@step(u'And data is shown')
+def and_data_si_shown(step):
+    search_result = world.driver.find_element_by_xpath('//*[@data-module="notebook-panel-search"]/div').text.encode('ascii','replace')
+    assert search_result.find("No results") == -1
+
+@step(u'And taxonomies are shown')
+def and_taxonomies_are_shown(step):
+    try:
+        world.driver.find_element_by_xpath('//*[@data-module="notebook-panel-search"]/div/div[2]/div[2]/div[3]/div[2]/div[2]/div[2]')
+    except NoSuchElementException, e:
+        print "No taxonomies are shown in search"
+        assert False, "No taxonomies are shown in search"
+
 
