@@ -1,0 +1,20 @@
+{
+	"type": "record",
+	"properties": {
+		"contributor": {
+			"type": "contributor",
+			"uri": "/contributors/demo/probes"
+		},
+		"host": {
+			"type": "string"
+		},
+		"os": {
+			"type": "record",
+			"properties": {
+				"name": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}

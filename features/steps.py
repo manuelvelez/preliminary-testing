@@ -8,6 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.action_chains import ActionChains
 
 @step(u'Given ikabo is opened')
 def given_ikabo_is_opened(step):
@@ -134,13 +135,38 @@ def and_create_a_contextualized_notebook_in_the_domain_group1_of_collection_grou
 
     world.driver.find_element_by_css_selector('[data-type=save-notebook]').click()
 
+@step(u'And I click on add new contributor type')
+def and_i_click_on_add_new_contributor_type(step):
+    time.sleep(1)
+    contributor_type_link = world.driver.find_element_by_css_selector('[data-controller=contributor-editor]')
+    contributor_box_header = world.driver.find_element_by_xpath('//*[@id="mod-dashboard-detail-streams-contributors-1"]/div/div[3]/div[1]/div/h2')
+    hov = ActionChains(world.driver).move_to_element(contributor_box_header)
+    hov.perform()
+    contributor_type_link.click()
 
+@step(u'And create a contributor type with name "([^"]*)" and schema stored in "([^"]*)"')
+def and_create_a_contributor_type_with_name_group1_and_schema_stored_in_group2(step, contributor_type_name, contributor_type_schema_file):
+    contributor_type_schema=open(contributor_type_schema_file).read()
 
+    contributor_type_name_test = contributor_type_name + str(world.scenario_time)
 
+    contributor_field = world.driver.find_element_by_css_selector('[data-type=set-collection]')
+    contributor_field.clear()
+    contributor_field.send_keys(contributor_type_name_test)
 
+    contributor_schema_field = world.driver.find_element_by_css_selector('[class=ace_content]')
+    seq = ActionChains(world.driver).move_to_element(contributor_schema_field).click().send_keys(contributor_type_schema)
+    seq.perform()
 
+    world.driver.find_element_by_css_selector('[data-type=save]').click()
 
-
-
-
+@step(u'Then the new contributor type with name "([^"]*)" is created')
+def then_the_new_contributor_type_is_created(step, contributor_type_name):
+    contributor_type_name_test = contributor_type_name + str(world.scenario_time)
+    time.sleep(1)
+    try:
+        contributor_element = world.driver.find_element_by_xpath('//div[text()="' + contributor_type_name_test + '"]')
+    except NoSuchElementException, e:
+        print "New Contributor type is not created properly"
+        assert False, "New Contributor type is not created properly"
 
