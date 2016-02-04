@@ -13,3 +13,13 @@ Feature: Fred creates a domain
     And the query is run
     And table is shown
     And chart "table line sparklines scatterplot column" buttons are shown
+
+  Scenario: create a query in an uncontextualized notebook
+    Given ikabo is opened
+    When I create an uncontextualized notebook called "N-smoke" in "smoke-not-coll"
+    And add a query field
+    And perform the following "from /streams/demo/infrastructure/cpu" query
+    Then the notebook "NC-smoke" is saved in "smoke-not-coll" and contextualized to ""
+    And the query is run
+    And table is shown
+    And chart "table line sparklines scatterplot column" buttons are shown

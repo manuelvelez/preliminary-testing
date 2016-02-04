@@ -82,16 +82,14 @@ def and_create_an_uncontextualized_notebook_called_group1_in_group2(step, group1
     time.sleep(2)
     world.driver.find_element_by_xpath('//*[@id="mod-tabs-1"]/div/div/div[2]').click()
 
-    #time.sleep(10)
-    collectionBox = world.driver.find_element_by_css_selector('[data-type=set-notebook-collection]')
+    time.sleep(2)
+    collectionBox = world.driver.find_element_by_xpath('//input[@data-type="set-notebook-collection" and not(ancestor::div[contains(@style,"display: none")])]')
     collectionBox.clear()
     collectionBox.send_keys(group2)
-
-    nameBox = world.driver.find_element_by_css_selector('[data-type=set-notebook-name]')
+    nameBox = world.driver.find_element_by_xpath('//input[@data-type="set-notebook-name" and not(ancestor::div[contains(@style,"display: none")])]')
     nameBox.clear()
     nameBox.send_keys(group1+str(world.scenario_time))
-
-    world.driver.find_element_by_css_selector('[data-type=save-notebook]').click()
+    world.driver.find_element_by_xpath('//button[@data-type="save-notebook" and not(ancestor::div[contains(@style,"display: none")])]').click()
 
 @step(u'Then the notebook "([^"]*)" is saved in "([^"]*)" and contextualized to "([^"]*)"')
 def then_the_notebook_group1_is_saved_in_group2_and_contextualized_to_group3(step, give_notebook_name, given_notebook_collection, given_domain_name):
@@ -251,6 +249,11 @@ def and_chart_group1_buttons_are_shown(step, buttons_string):
             query_time_element = world.driver.find_element_by_css_selector('[id=selector-' + button + ']')
         except NoSuchElementException, e:
             assert False, button + " button is not shown"
+
+@step(u'When I create an uncontextualized notebook called "([^"]*)" in "([^"]*)"')
+def when_i_create_an_uncontextualized_notebook_called_group1_in_group2(step, notebook_name, notebook_collection):
+    and_create_an_uncontextualized_notebook_called_group1_in_group2(step, notebook_name, notebook_collection)
+
 
 
 
