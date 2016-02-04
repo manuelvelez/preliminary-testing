@@ -172,7 +172,6 @@ def then_the_new_contributor_type_is_created(step, contributor_type_name):
         print "New Contributor type is not created properly"
         assert False, "New Contributor type is not created properly"
 
-
 @step(u'And add a search field')
 def and_add_a_search_field(step):
     time.sleep(1)
@@ -189,14 +188,12 @@ def and_perform_an_group1_search(step, search_term):
 
     world.driver.find_element_by_css_selector('[data-type=run-search]').click()
 
-
 @step(u'And the search is executed')
 def and_the_search_is_executed(step):
     time.sleep(1)
     try:
         search_time_element = world.driver.find_element_by_css_selector('[class=ui-panel-controls-btn-time]')
     except NoSuchElementException, e:
-        print "Search is not executed"
         assert False, "Search is not executed"
 
 @step(u'And data is shown')
@@ -209,7 +206,51 @@ def and_taxonomies_are_shown(step):
     try:
         world.driver.find_element_by_xpath('//*[@data-module="notebook-panel-search"]/div/div[2]/div[2]/div[3]/div[2]/div[2]/div[2]')
     except NoSuchElementException, e:
-        print "No taxonomies are shown in search"
         assert False, "No taxonomies are shown in search"
+
+@step(u'And add a query field')
+def and_add_a_search_field(step):
+    time.sleep(1)
+    world.driver.find_element_by_css_selector('[data-popup=cli0]').click()
+    time.sleep(1)
+    world.driver.find_element_by_css_selector('[data-panel=historical]').click()
+
+@step(u'And perform the following "([^"]*)" query')
+def and_perform_the_following_group1_query(step, query_string):
+    search_field = world.driver.find_element_by_css_selector('[class=ace_content]')
+    time.sleep(1)
+    seq = ActionChains(world.driver).move_to_element(search_field).send_keys(query_string)
+    seq.perform()
+
+    world.driver.find_element_by_css_selector('[data-type=run-query]').click()
+
+@step(u'And the query is run')
+def and_the_query_is_run(step):
+    time.sleep(1)
+    try:
+        query_time_element = world.driver.find_element_by_css_selector('[class=ui-panel-controls-btn-time]')
+    except NoSuchElementException, e:
+        assert False, "Query is not executed"
+
+@step(u'And table is shown')
+def and_table_is_shown(step):
+    try:
+        query_header_element = world.driver.find_element_by_css_selector('[class=dataTables_scrollHead]')
+    except NoSuchElementException, e:
+        assert False, "Query header is not shown"
+
+    try:
+        query_body_element = world.driver.find_element_by_css_selector('[class=dataTables_scrollHead]')
+    except NoSuchElementException, e:
+        assert False, "Query body is not shown"
+
+@step(u'And chart "([^"]*)" buttons are shown')
+def and_chart_group1_buttons_are_shown(step, buttons_string):
+    for button in buttons_string.split():
+        try:
+            query_time_element = world.driver.find_element_by_css_selector('[id=selector-' + button + ']')
+        except NoSuchElementException, e:
+            assert False, button + " button is not shown"
+
 
 
