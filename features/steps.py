@@ -6,7 +6,7 @@ import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 
@@ -279,6 +279,44 @@ def and_clone_the_domain_group1_to_group2(step, group1, group2):
 @step(u'And the notebook "([^"]*)" is saved in "([^"]*)" and contextualized to "([^"]*)"')
 def and_the_notebook_group1_is_saved_in_group2_and_contextualized_to_group3(step, give_notebook_name, given_notebook_collection, given_domain_name):
     then_the_notebook_group1_is_saved_in_group2_and_contextualized_to_group3(step, give_notebook_name, given_notebook_collection, given_domain_name)
+
+@step(u'And open the "([^"]*)" stream editor from "([^"]*)" collection')
+def and_open_the_group1_stream_editor_from_group2_collection(step, stream_name, collection_name):
+    time.sleep(1)
+    world.driver.find_element_by_css_selector('[data-id=' + collection_name + '-' + stream_name + ']').click()
+
+@step(u'And create a tag "([^"]*)" with body stored in "([^"]*)"')
+def and_create_a_tag_group1_with_body_stored_in_group2(step, tag_name, tag_file_name):
+    tag_name_test = tag_name+str(world.scenario_time)
+    time.sleep(1)
+    world.driver.find_element_by_xpath('//a[text()="TAGGING" and not(ancestor::div[contains(@style,"display: none")])]').click()
+
+    try:
+        tag_field = world.driver.find_element_by_xpath('//input[@data-type="set-tag-field" and @disabled!=true() and not(ancestor::div[contains(@style,"display: none")])]')
+    except NoSuchElementException, e:
+        world.driver.find_element_by_xpath('//div[@data-type="set-tag" and not(ancestor::div[contains(@style,"display: none")])]/img').click()
+        tag_field = world.driver.find_element_by_xpath('//input[@data-type="set-tag-field" and @disabled!=true() and not(ancestor::div[contains(@style,"display: none")])]')
+
+
+    tag_field.clear()
+    tag_field.send_keys(tag_name_test)
+
+    tag_definition=open(tag_file_name).read()
+    body_field = world.driver.find_element_by_xpath('//input[@data-type="set-tag-field" and @disabled!=true() and not(ancestor::div[contains(@style,"display: none")])]//ancestor::div[@class="ui-tagging-panel"]//div[@class="ace_content"]')
+    seq = ActionChains(world.driver).move_to_element(body_field).click().send_keys(Keys.ENTER).send_keys("function tag(payload) {}").move_to_element(body_field)
+    seq.perform()
+
+    time.sleep(1)
+
+@step(u'And click on save tags button')
+def and_click_on_save_tags_button(step):
+    world.driver.find_element_by_xpath('//button[@data-type="save-tags"]').click()
+    time.sleep(1)
+
+@step(u'Then the new tag "([^"]*)" is created for "([^"]*)" stream')
+def then_the_new_tag_group1_is_created_for_group2_stream(step, group1, group2):
+    success_text = world.driver.find_element_by_xpath('//div[@class="header" and text()="The stream tags were successfully updated"]')
+    assert True, success_text
 
 
 
