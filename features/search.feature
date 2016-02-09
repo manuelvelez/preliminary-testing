@@ -1,4 +1,4 @@
-Feature: Fred creates a domain
+Feature: Fred executes a search
 
   Scenario: create a search in a contextualized notebook
     Given ikabo is opened

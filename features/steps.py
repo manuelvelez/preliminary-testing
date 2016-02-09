@@ -48,7 +48,6 @@ def and_create_a_domain_in_group1_called_group2(step, group1, group2):
     time.sleep(2)
     world.driver.find_element_by_xpath('//*[@id="mod-tabs-1"]/div/div/div[1]').click()
 
-    #time.sleep(10)
     collectionBox = world.driver.find_element_by_css_selector('[data-type=set-domain-collection]')
     collectionBox.clear()
     collectionBox.send_keys(group1)
@@ -69,9 +68,8 @@ def then_the_domain_group1_is_saved_in_group2(step, group1, group2):
     text = " "+group2
     domain_in_collection=world.driver.find_elements_by_xpath('//ul[@class="ui-level2_open"]/li[text()="'+text+'"]/../ul/li[@data-name="'+group1+str(world.scenario_time)+'"]')
     assert len(domain_in_collection) == 1
-
     domain_in_collection[0].click()
-    domain_name = world.driver.find_element_by_css_selector('[data-type=set-page-name]').text
+    domain_name = world.driver.find_element_by_xpath('//h1[@data-type="set-page-name" and not(ancestor::div[contains(@style,"display: none")])]').text
     assert domain_name == group1+str(world.scenario_time)
 
 
@@ -104,13 +102,15 @@ def then_the_notebook_group1_is_saved_in_group2_and_contextualized_to_group3(ste
         notebook_full_name = notebook_name + ' (' + domain_name + ')'
 
     world.driver.find_element_by_css_selector('[data-id=notebooks]').click()
+    time.sleep(2)
     collection_name = " "+given_notebook_collection
     notebooks_in_collection=world.driver.find_elements_by_xpath('//ul[@class="ui-level2_open"]/li[text()="'+collection_name+'"]/../ul/li/div[text()="'+notebook_full_name+'"]')
     assert len(notebooks_in_collection) == 1
 
 
     notebooks_in_collection[0].click()
-    notebook_name_in_app = world.driver.find_element_by_xpath('//*[@id="mod-page-notebook-1"]/div/div[1]/div[1]/div[3]/h1').text
+    notebook_name_in_app = world.driver.find_element_by_xpath('//h1[@data-type="name" and not(ancestor::div[contains(@style,"display: none")])]').text
+
     assert notebook_name_in_app == notebook_name
 
     try:
@@ -253,6 +253,33 @@ def and_chart_group1_buttons_are_shown(step, buttons_string):
 @step(u'When I create an uncontextualized notebook called "([^"]*)" in "([^"]*)"')
 def when_i_create_an_uncontextualized_notebook_called_group1_in_group2(step, notebook_name, notebook_collection):
     and_create_an_uncontextualized_notebook_called_group1_in_group2(step, notebook_name, notebook_collection)
+
+@step(u'And clone the domain "([^"]*)" to "([^"]*)"')
+def and_clone_the_domain_group1_to_group2(step, group1, group2):
+    domain_name_test = group1+str(world.scenario_time)
+    cloned_domain_name_test = group2+str(world.scenario_time)
+
+    time.sleep(1)
+    #world.driver.find_element_by_css_selector(css_selector).click()
+    xpath_selector='//a[@title="' + domain_name_test + '"]'
+
+    world.driver.find_element_by_xpath(xpath_selector).click()
+    world.driver.find_element_by_css_selector('[data-type=save-domain-as-modal]').click()
+    cloning_name_element = world.driver.find_element_by_css_selector('[data-type=cloning-name]')
+    cloning_name_element.clear()
+    cloning_name_element.send_keys(cloned_domain_name_test)
+
+    world.driver.find_element_by_css_selector('[data-type=include-all-notebooks]').click()
+    time.sleep(1)
+    world.driver.find_element_by_css_selector('[data-type=save-domain-as]').click()
+    time.sleep(1)
+    world.driver.find_element_by_css_selector('[data-type=save-domain-as]').click()
+    time.sleep(2)
+
+@step(u'And the notebook "([^"]*)" is saved in "([^"]*)" and contextualized to "([^"]*)"')
+def and_the_notebook_group1_is_saved_in_group2_and_contextualized_to_group3(step, give_notebook_name, given_notebook_collection, given_domain_name):
+    then_the_notebook_group1_is_saved_in_group2_and_contextualized_to_group3(step, give_notebook_name, given_notebook_collection, given_domain_name)
+
 
 
 
