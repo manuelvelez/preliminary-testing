@@ -1,17 +1,32 @@
 from lettuce import before, world, after
 from selenium import webdriver
 import time
-import selenium.webdriver.chrome.service as service
-import lettuce_webdriver.webdriver
+import os
 
 @before.each_feature
 def setup_browser(feature):
-    # chrome_path="/opt/ikabo_releases/IKABO-1.0.0-linux-x64-caa40496/IKABO-1.0.0"
-    # chrome_path="/opt/ikabo_latest/IKABO-0.1.0"
-    chrome_path = "/opt/ikabo_latest/ITRS-Insights"
+    try:
+        world.valo_url = os.environ['VALO_SMOKE_URL']
+    except KeyError:
+        print "Please set the environment variable VALO_SMOKE_URL"
+        assert False, "Please set the environment variable VALO_SMOKE_URL"
+
+    try:
+        world.ikabo_binary_path = os.environ['IKABO_PATH']
+    except KeyError:
+        print "Please set the environment variable IKABO_PATH"
+        assert False, "Please set the environment variable IKABO_PATH"
+
+    try:
+        world.ikabo_tenant = os.environ['IKABO_TENANT']
+    except KeyError:
+        print "Please set the environment variable IKABO_TENANT"
+        assert False, "Please set the environment IKABO_TENANT"
+
     opts = webdriver.ChromeOptions()
-    opts.binary_location = chrome_path
+    opts.binary_location = world.ikabo_binary_path
     world.driver = webdriver.Chrome(chrome_options=opts)
+
 
 @before.each_scenario
 def get_timestamp(feature):

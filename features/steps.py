@@ -1,11 +1,5 @@
 from lettuce import *
-from lettuce_webdriver.util import assert_false
-from lettuce_webdriver.util import AssertContextManager
 import time
-
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
@@ -14,17 +8,17 @@ from selenium.webdriver.common.action_chains import ActionChains
 def given_ikabo_is_opened(step):
 	time.sleep(2)
 
-@step(u'When I configure valo with "([^"]*)"')
-def when_i_configure_valo_with_group1(step, group1):
+@step(u'When I configure valo url')
+def when_i_configure_valo_url(step):
 	valoUrl = world.driver.find_element_by_css_selector('[data-type=valoLocation]')
 	valoUrl.clear()
-	valoUrl.send_keys(group1)
+	valoUrl.send_keys(world.valo_url)
 
-@step(u'And I Configure the tenant with "([^"]*)"')
-def and_i_configure_the_tenant_with_group1(step, group1):
+@step(u'And I Configure the tenant string')
+def and_i_configure_the_tenant_string(step):
 	valoTenant = world.driver.find_element_by_css_selector('[data-type=valoTenant]')
 	valoTenant.clear()
-	valoTenant.send_keys(group1)
+	valoTenant.send_keys(world.ikabo_tenant)
 
 @step(u'And click start button')
 def and_click_start_button(step):
